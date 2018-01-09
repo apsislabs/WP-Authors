@@ -8,9 +8,9 @@ class Utils
     {
         if (
             !isset($_POST[$nonce_key]) ||
-            !wp_verify_nonce( $_POST[$nonce_key], $nonce_value ) ||
-            !current_user_can( 'edit_post', $post_id ) ||
-            (defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE)
+            !wp_verify_nonce($_POST[$nonce_key], $nonce_value) ||
+            !current_user_can('edit_post', $post_id) ||
+            (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
         ) {
             return false;
         }
