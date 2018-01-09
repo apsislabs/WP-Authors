@@ -18,6 +18,20 @@ class Utils
         return true;
     }
 
+    public static function safeSaveMeta($post_id, $meta_key)
+    {
+        if (array_key_exists($meta_key, $_POST)) {
+            update_post_meta($post_id, $meta_key, sanitize_text_field(htmlentities($_POST[$meta_key])));
+        }
+    }
+
+    public static function safeSaveRichTextMeta($post_id, $meta_key)
+    {
+        if (array_key_exists($meta_key, $_POST)) {
+            update_post_meta($post_id, $meta_key, wp_kses_post($_POST[$meta_key]));
+        }
+    }
+
     public static function getPostAuthor($post_id)
     {
         return get_post_meta($post_id, AUTHOR_META_ID, true);

@@ -4,10 +4,6 @@ namespace Apsis;
 
 class Authors
 {
-    private function __construct()
-    {
-    }
-
     public static function init()
     {
         add_action('init', array(static::class, 'registerAuthorPostType'));
@@ -46,46 +42,25 @@ class Authors
     public static function saveAuthorInfoMetabox($post_id)
     {
         if (get_post_type($post_id) !== AUTHOR_POST_TYPE) {
-            return false;
+            return $post_id;
         }
 
         if (!Utils::isValidSave($post_id, SECURITY_NONCE_KEY, SECURITY_NONCE_VALUE)) {
-            return false;
-        }
-
-        if (empty($_POST['first_name']) || empty($_POST['last_name'])) {
-            return false;
+            return $post_id;
         }
 
         // Sanitize & Save
-        if (array_key_exists('first_name', $_POST)) {
-            update_post_meta($post_id, AUTHOR_FIRST_NAME_META_ID, sanitize_text_field($_POST['first_name']));
-        }
+        Utils::safeSaveMeta($post_id, AUTHOR_FIRST_NAME_META_ID);
+        Utils::safeSaveMeta($post_id, AUTHOR_LAST_NAME_META_ID);
+        Utils::safeSaveMeta($post_id, AUTHOR_AVATAR_META_ID);
 
-        if (array_key_exists('last_name', $_POST)) {
-            update_post_meta($post_id, AUTHOR_LAST_NAME_META_ID, sanitize_text_field($_POST['last_name']));
-        }
-
-        if (array_key_exists('avatar_id', $_POST)) {
-            update_post_meta($post_id, AUTHOR_AVATAR_META_ID, sanitize_text_field($_POST['avatar_id']));
-        }
-
-        if (array_key_exists('bio', $_POST)) {
-            update_post_meta($post_id, AUTHOR_BIO_META_ID, sanitize_text_field(htmlentities($_POST['bio'])));
-        }
+        Utils::safeSaveRichTextMeta($post_id, AUTHOR_BIO_META_ID);
     }
 
     public static function enqueueAdmin($hook)
     {
         global $post;
-
-        // Lock down to Edit Posts screen
-        $is_edit_page = ('post.php' === $hook || 'post-new.php' === $hook);
-        $is_author_post_type = $post->post_type === AUTHOR_POST_TYPE;
-
-        if (!$is_edit_page || !$is_author_post_type) {
-            return;
-        }
+        if ( !static::shouldEnqueueScripts($hook, $post) ) { return; }
 
         // Vendor Scripts
         // ------------------------------------------------
@@ -96,5 +71,12 @@ class Authors
         // ------------------------------------------------
         wp_register_script('wp_authors_admin', AUTHORS_PLUGIN_URL . '/assets/author_post_admin.js', array('jquery', 'jquery-validate'), false, true);
         wp_enqueue_script('wp_authors_admin');
+    }
+
+    private static function shouldEnqueueScripts($hook, $post)
+    {
+        $is_edit_page = ('post.php' === $hook || 'post-new.php' === $hook);
+        $is_author_post_type = $post->post_type === AUTHOR_POST_TYPE;
+        return ($is_edit_page && $is_author_post_type);
     }
 }

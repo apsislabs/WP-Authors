@@ -4,10 +4,6 @@ namespace Apsis;
 
 class EditPosts
 {
-    private function __construct()
-    {
-    }
-
     public static function init()
     {
         add_action('add_meta_boxes', array(static::class, "addPostMetaBoxes"));
@@ -41,13 +37,7 @@ class EditPosts
         }
 
         // Sanitize & Save
-        if (array_key_exists('ap_authors', $_POST)) {
-            update_post_meta(
-                $post_id,
-                AUTHOR_META_ID,
-                sanitize_text_field($_POST['ap_authors'])
-            );
-        }
+        Utils::safeSaveMeta($post_id, AUTHOR_META_ID);
     }
 
     public static function enqueueAdmin($hook)
