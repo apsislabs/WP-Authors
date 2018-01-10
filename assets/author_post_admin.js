@@ -3,7 +3,7 @@
      * Select/Upload image(s) event
      */
 
-    // $('#post').validate();
+    $('#post').validate();
 
     var imageUploader = wp.media({
         title: 'Insert image',
