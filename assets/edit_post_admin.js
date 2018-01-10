@@ -24,7 +24,6 @@
         event.preventDefault();
 
         var formData = $newAuthorInputs.serializeArray();
-
         formData.push({name: "action", value: "handleAddAuthorAjax"});
 
         $.post(ajaxurl, formData)

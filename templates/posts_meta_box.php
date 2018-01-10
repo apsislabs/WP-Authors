@@ -7,7 +7,7 @@
 
     <div class="field">
         <label for="ap_authors"><?= __('Select Author', 'apsis_wp'); ?></label>
-        <select name="ap_authors" id="ap_authors">
+        <select name="<?= AUTHOR_META_ID; ?>" id="ap_authors">
             <option value=""></option>
 
             <?php foreach ($authors as $author) : ?>
