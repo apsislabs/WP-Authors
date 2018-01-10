@@ -25,8 +25,6 @@
     $('body').on('click', '#remove_avatar', function(event) {
         event.preventDefault();
 
-        console.log("test");
-
         $('#avatar_preview').empty();
         $('#avatar').val("");
         $('#avatar_id').val("");
